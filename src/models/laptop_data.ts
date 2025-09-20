@@ -1,6 +1,6 @@
 export interface LaptopAcc {
-  id: bigint;
+  id: number;
   name: string;
   last_rented?: Date | null;
-  user_id?: bigint | null;
+  user_id?: number | null;
 }

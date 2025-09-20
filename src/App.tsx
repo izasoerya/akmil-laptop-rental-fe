@@ -15,6 +15,7 @@ import {
 import CustomTableHeader from "./components/molecule/custom_table_header";
 import type { LaptopAcc } from "./models/laptop_data";
 import { BiTrash } from "react-icons/bi";
+import ListName from "./models/lookup_table_name";
 
 function App() {
   const [items, setItems] = useState<LaptopAcc[]>([]);
@@ -100,7 +101,11 @@ function App() {
                       })
                     : "-"}
                 </Table.Cell>
-                <Table.Cell>{item.user_id ? item.user_id : "-"}</Table.Cell>
+                <Table.Cell>
+                  {item.user_id
+                    ? (ListName as { [index: number]: string })[item.user_id]
+                    : "-"}
+                </Table.Cell>
                 <Table.Cell justifyItems={"center"}>
                   <Flex gap="2" align="center">
                     <Box
