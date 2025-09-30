@@ -78,7 +78,7 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
         <Text
           fontSize="xl"
           fontWeight="bold"
-          color={isDarkMode ? "#f9f9f9" : "rgba(0, 0, 0, 0.5)"}
+          color={isDarkMode ? "#f9f9f9" : "rgba(0, 0, 0, 1.0)"}
         >
           RealTime Dashboard
         </Text>
