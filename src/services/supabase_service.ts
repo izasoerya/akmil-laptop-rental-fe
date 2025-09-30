@@ -78,6 +78,12 @@ class SupabaseService {
     const { error } = await this.api.from("user_acc").insert(user);
     if (error) throw error;
   }
+
+  async fetchUserTable(): Promise<any[]> {
+    const { data, error } = await this.api.from("user_acc").select("*");
+    if (error) throw error;
+    return data || [];
+  }
 }
 
 export default new SupabaseService();

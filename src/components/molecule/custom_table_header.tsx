@@ -4,6 +4,7 @@ import { FaSun, FaMoon } from "react-icons/fa";
 import { CgAdd, CgUserAdd } from "react-icons/cg"; // Added CgUserAdd for clarity
 import SupabaseService from "@/services/supabase_service";
 import ReusableDialog from "./ReusableDialog"; // Make sure this path is correct
+import { ShowAll } from "./show_all";
 
 // A type for the user data object for better code safety
 interface UserData {
@@ -91,7 +92,7 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
               {lastUpdate ? lastUpdate : "-"}
             </Text>
           </VStack>
-
+          <ShowAll></ShowAll>
           {/* Dialog for Adding a NEW LAPTOP */}
           <ReusableDialog
             logo={<CgAdd color={"white"} size="24px" />}
@@ -101,7 +102,6 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
             onSubmit={handleAddLaptop}
             isUser={false} // This dialog is NOT for users
           />
-
           {/* Dialog for Adding a NEW USER */}
           <ReusableDialog
             logo={<CgUserAdd color={"white"} size="24px" />}
@@ -110,7 +110,6 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
             onSubmit={handleAddUser}
             isUser={true} // This dialog IS for users
           />
-
           <Button
             onClick={toggleDarkMode}
             colorScheme={isDarkMode ? "yellow" : "blue"}
