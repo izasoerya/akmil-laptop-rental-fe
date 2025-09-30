@@ -31,7 +31,7 @@
   padding: 2.5rem 2.5rem;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 75, 160, 0.2);
-  min-width: 360px;
+  min-width: 400px;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
