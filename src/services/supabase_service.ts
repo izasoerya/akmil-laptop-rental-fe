@@ -48,6 +48,22 @@ class SupabaseService {
     const { error } = await this.api.from("laptop_acc").delete().eq("id", id);
     if (error) throw error;
   }
+
+  async loginAdmin(email: string, password: string): Promise<boolean> {
+    const { data, error } = await this.api
+      .from("admin_acc")
+      .select("password")
+      .eq("email", email)
+      .single();
+
+    if (error || !data) {
+      console.error("Login error:", error);
+      return false;
+    }
+
+    // Mock password validation (in real-world, use hashed passwords)
+    return data.password === password;
+  }
 }
 
 export default new SupabaseService();
