@@ -1,21 +1,18 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Flex,
-  Text,
-  VStack,
-  Button,
-  CloseButton,
-  Portal,
-  IconButton,
-  Field,
-  Input,
-  Dialog,
-  Icon,
-} from "@chakra-ui/react";
-import { CgAdd } from "react-icons/cg";
-import SupabaseService from "@/services/supabase_service";
+import React from "react";
+import { Box, Flex, Text, VStack, Button, Icon } from "@chakra-ui/react";
 import { FaSun, FaMoon } from "react-icons/fa";
+import { CgAdd, CgUserAdd } from "react-icons/cg"; // Added CgUserAdd for clarity
+import SupabaseService from "@/services/supabase_service";
+import ReusableDialog from "./ReusableDialog"; // Make sure this path is correct
+
+// A type for the user data object for better code safety
+interface UserData {
+  id?: number;
+  name: string;
+  nrp?: string;
+  pangkat?: string;
+  kelas?: string;
+}
 
 interface CustomTableHeaderProps {
   lastUpdate?: string;
@@ -28,15 +25,27 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
   toggleDarkMode,
   isDarkMode,
 }) => {
-  const [laptopName, setLaptopName] = useState("");
+  // State is no longer needed here; it's managed by ReusableDialog.
 
-  const handleAdd = async () => {
-    if (!laptopName.trim()) return;
+  // Handler for adding a LAPTOP (expects a string)
+  const handleAddLaptop = async (laptopName: string) => {
+    if (!laptopName.trim()) return; // Validation for the string
     try {
       await SupabaseService.insertLaptopAcc(laptopName);
-      setLaptopName("");
+      console.log("Laptop added successfully!");
     } catch (err) {
-      console.error("Insert error:", err);
+      console.error("Insert laptop error:", err);
+    }
+  };
+
+  // Handler for adding a USER (expects an object)
+  const handleAddUser = async (userData: UserData) => {
+    // No .trim() needed; validation is handled in the dialog
+    try {
+      await SupabaseService.insertUserAcc(userData);
+      console.log("User added successfully!");
+    } catch (err) {
+      console.error("Insert user error:", err);
     }
   };
 
@@ -47,18 +56,17 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
       borderRadius="md"
       boxShadow={
         isDarkMode
-          ? "0 40px 60px rgba(0, 0, 0, 0.1)"
+          ? "0 4px 6px rgba(0, 0, 0, 0.1)"
           : "0 4px 6px rgba(0, 0, 0, 0.05)"
       }
       style={{
         width: "75%",
         margin: "auto",
-        // Glassmorphism styles applied here
         background: isDarkMode
-          ? "rgba(0, 0, 0, 0.5)" // Dark, semi-transparent
-          : "rgba(255, 255, 255, 0.35)", // Light, semi-transparent
+          ? "rgba(0, 0, 0, 0.5)"
+          : "rgba(255, 255, 255, 0.35)",
         backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)", // For Safari support
+        WebkitBackdropFilter: "blur(12px)",
       }}
     >
       <Flex
@@ -70,7 +78,7 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
         <Text
           fontSize="xl"
           fontWeight="bold"
-          color={isDarkMode ? "#f9f9f9" : "#181818ff"} // Adjusted text color for better contrast
+          color={isDarkMode ? "#f9f9f9" : "rgba(0, 0, 0, 0.5)"}
         >
           RealTime Dashboard
         </Text>
@@ -84,46 +92,24 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
             </Text>
           </VStack>
 
-          <Dialog.Root>
-            <Dialog.Trigger asChild>
-              <IconButton aria-label="Add laptop" bg="gray.900" color="white">
-                <CgAdd color={"white"} />
-              </IconButton>
-            </Dialog.Trigger>
-            <Portal>
-              <Dialog.Backdrop />
-              <Dialog.Positioner>
-                <Dialog.Content>
-                  <Dialog.Header>
-                    <Dialog.Title>Add New Laptop</Dialog.Title>
-                  </Dialog.Header>
-                  <Dialog.Body>
-                    <Field.Root required>
-                      <Field.Label>
-                        Laptop's Name <Field.RequiredIndicator />
-                      </Field.Label>
-                      <Input
-                        placeholder="Enter Laptop's Name"
-                        value={laptopName}
-                        onChange={(e) => setLaptopName(e.target.value)}
-                      />
-                    </Field.Root>
-                  </Dialog.Body>
-                  <Dialog.Footer>
-                    <Dialog.ActionTrigger asChild>
-                      <Button variant="outline">Cancel</Button>
-                    </Dialog.ActionTrigger>
-                    <Button color="white" onClick={() => handleAdd()}>
-                      Add
-                    </Button>
-                  </Dialog.Footer>
-                  <Dialog.CloseTrigger asChild>
-                    <CloseButton size="sm" />
-                  </Dialog.CloseTrigger>
-                </Dialog.Content>
-              </Dialog.Positioner>
-            </Portal>
-          </Dialog.Root>
+          {/* Dialog for Adding a NEW LAPTOP */}
+          <ReusableDialog
+            logo={<CgAdd color={"white"} size="24px" />}
+            logoText="Add Laptop"
+            label="Add New Laptop"
+            placeholder="Enter Laptop's Name"
+            onSubmit={handleAddLaptop}
+            isUser={false} // This dialog is NOT for users
+          />
+
+          {/* Dialog for Adding a NEW USER */}
+          <ReusableDialog
+            logo={<CgUserAdd color={"white"} size="24px" />}
+            logoText="Add User"
+            label="Add New User"
+            onSubmit={handleAddUser}
+            isUser={true} // This dialog IS for users
+          />
 
           <Button
             onClick={toggleDarkMode}

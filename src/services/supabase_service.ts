@@ -1,6 +1,15 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import type { LaptopAcc } from "../models/laptop_data";
 
+// Define the shape of a user object to match your table
+interface UserAcc {
+  id?: number; // ID is optional
+  name: string;
+  nrp?: string | null;
+  pangkat?: string | null;
+  kelas?: string | null;
+}
+
 class SupabaseService {
   api: SupabaseClient;
 
@@ -61,8 +70,13 @@ class SupabaseService {
       return false;
     }
 
-    // Mock password validation (in real-world, use hashed passwords)
     return data.password === password;
+  }
+
+  // Updated to accept the UserAcc type with an optional id
+  async insertUserAcc(user: UserAcc): Promise<void> {
+    const { error } = await this.api.from("user_acc").insert(user);
+    if (error) throw error;
   }
 }
 
