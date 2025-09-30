@@ -1,0 +1,133 @@
+/* Using CSS variables for a consistent theme */
+:root {
+  --primary-color: #1976d2;
+  --primary-light: #63a4ff;
+  --primary-dark: #004ba0;
+  --background-light: #e3f2fd;
+  --text-color: #333;
+  --border-color: #b0bec5;
+  --white-color: #fff;
+}
+
+/* --- Main Container & Background --- */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--background-light) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+/* --- Login Form Styling --- */
+.form {
+  background: var(--white-color);
+  padding: 2.5rem 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 75, 160, 0.2);
+  min-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.header {
+  text-align: center;
+}
+
+.header h2 {
+  color: var(--primary-dark);
+  margin-bottom: 0.25rem;
+  font-size: 1.75rem;
+}
+
+.header p {
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* --- Input Fields & Labels --- */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--primary-dark);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+  background: #f7f9fc;
+  color: var(--text-color);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+}
+
+.passwordWrapper {
+  position: relative;
+}
+
+/* --- Buttons --- */
+.showPasswordButton {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #546e7a;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.showPasswordButton:hover {
+  color: var(--primary-dark);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.submitButton {
+  background: var(--primary-color);
+  color: var(--white-color);
+  padding: 12px 0;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-top: 0.5rem;
+}
+
+.submitButton:hover {
+  background: var(--primary-light);
+}
+
+.submitButton:active {
+  transform: scale(0.98);
+}
