@@ -5,11 +5,10 @@ import {
   IconButton,
   Portal, // Import Portal for proper layering
 } from "@chakra-ui/react";
-import { LuDelete, LuSearch } from "react-icons/lu";
+import { LuSearch } from "react-icons/lu";
 import SupabaseService from "../../services/supabase_service";
 import { useEffect, useState } from "react";
 import type { UserAcc } from "../../models/user_acc";
-import { FaDeleteLeft } from "react-icons/fa6";
 import { BiTrash } from "react-icons/bi";
 
 export const ShowAll = () => {
