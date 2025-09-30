@@ -1,6 +1,15 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import type { LaptopAcc } from "../models/laptop_data";
 
+// Define the shape of a user object to match your table
+interface UserAcc {
+  id?: number; // ID is optional
+  name: string;
+  nrp?: string | null;
+  pangkat?: string | null;
+  kelas?: string | null;
+}
+
 class SupabaseService {
   api: SupabaseClient;
 
@@ -47,6 +56,33 @@ class SupabaseService {
   async deleteLaptopAcc(id: number): Promise<void> {
     const { error } = await this.api.from("laptop_acc").delete().eq("id", id);
     if (error) throw error;
+  }
+
+  async loginAdmin(email: string, password: string): Promise<boolean> {
+    const { data, error } = await this.api
+      .from("admin_acc")
+      .select("password")
+      .eq("email", email)
+      .single();
+
+    if (error || !data) {
+      console.error("Login error:", error);
+      return false;
+    }
+
+    return data.password === password;
+  }
+
+  // Updated to accept the UserAcc type with an optional id
+  async insertUserAcc(user: UserAcc): Promise<void> {
+    const { error } = await this.api.from("user_acc").insert(user);
+    if (error) throw error;
+  }
+
+  async fetchUserTable(): Promise<any[]> {
+    const { data, error } = await this.api.from("user_acc").select("*");
+    if (error) throw error;
+    return data || [];
   }
 }
 

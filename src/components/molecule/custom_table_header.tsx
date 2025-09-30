@@ -1,100 +1,125 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Flex,
-  Text,
-  VStack,
-  Button,
-  CloseButton,
-  Portal,
-  IconButton,
-  Field,
-  Input,
-  Dialog,
-} from "@chakra-ui/react";
-import { CgAdd } from "react-icons/cg";
+import React from "react";
+import { Box, Flex, Text, VStack, Button, Icon } from "@chakra-ui/react";
+import { FaSun, FaMoon } from "react-icons/fa";
+import { CgAdd, CgUserAdd } from "react-icons/cg"; // Added CgUserAdd for clarity
 import SupabaseService from "@/services/supabase_service";
+import ReusableDialog from "./ReusableDialog"; // Make sure this path is correct
+import { ShowAll } from "./show_all";
+
+// A type for the user data object for better code safety
+interface UserData {
+  id?: number;
+  name: string;
+  nrp?: string;
+  pangkat?: string;
+  kelas?: string;
+}
 
 interface CustomTableHeaderProps {
   lastUpdate?: string;
+  toggleDarkMode: () => void;
+  isDarkMode: boolean;
 }
 
 const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
   lastUpdate,
+  toggleDarkMode,
+  isDarkMode,
 }) => {
-  const [laptopName, setLaptopName] = useState("");
+  // State is no longer needed here; it's managed by ReusableDialog.
 
-  const handleAdd = async () => {
-    if (!laptopName.trim()) return;
+  // Handler for adding a LAPTOP (expects a string)
+  const handleAddLaptop = async (laptopName: string) => {
+    if (!laptopName.trim()) return; // Validation for the string
     try {
       await SupabaseService.insertLaptopAcc(laptopName);
-      setLaptopName("");
+      console.log("Laptop added successfully!");
     } catch (err) {
-      console.error("Insert error:", err);
+      console.error("Insert laptop error:", err);
+    }
+  };
+
+  // Handler for adding a USER (expects an object)
+  const handleAddUser = async (userData: UserData) => {
+    // No .trim() needed; validation is handled in the dialog
+    try {
+      await SupabaseService.insertUserAcc(userData);
+      console.log("User added successfully!");
+    } catch (err) {
+      console.error("Insert user error:", err);
     }
   };
 
   return (
-    <Box bg="gray.800" px={10} py={4} borderRadius="md" boxShadow="sm">
+    <Box
+      px={10}
+      py={4}
+      borderRadius="md"
+      boxShadow={
+        isDarkMode
+          ? "0 4px 6px rgba(0, 0, 0, 0.1)"
+          : "0 4px 6px rgba(0, 0, 0, 0.05)"
+      }
+      style={{
+        width: "75%",
+        margin: "auto",
+        background: isDarkMode
+          ? "rgba(0, 0, 0, 0.5)"
+          : "rgba(255, 255, 255, 0.35)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+      }}
+    >
       <Flex
         justify="space-between"
         align="center"
         direction={{ base: "column", md: "row" }}
         gap={4}
       >
-        <Text fontSize="xl" fontWeight="bold" color="white">
+        <Text
+          fontSize="xl"
+          fontWeight="bold"
+          color={isDarkMode ? "#f9f9f9" : "rgba(0, 0, 0, 1.0)"}
+        >
           RealTime Dashboard
         </Text>
-        <Flex gap="5">
+        <Flex gap="5" align="center">
           <VStack align="flex-end" gap={0}>
-            <Text fontSize="sm" color="white">
+            <Text fontSize="sm" color={isDarkMode ? "white" : "black"}>
               Last update:
             </Text>
-            <Text fontSize="sm" color="white">
+            <Text fontSize="sm" color={isDarkMode ? "white" : "black"}>
               {lastUpdate ? lastUpdate : "-"}
             </Text>
           </VStack>
-
-          <Dialog.Root>
-            <Dialog.Trigger asChild>
-              <IconButton aria-label="Add laptop">
-                <CgAdd color="white" />
-              </IconButton>
-            </Dialog.Trigger>
-            <Portal>
-              <Dialog.Backdrop />
-              <Dialog.Positioner>
-                <Dialog.Content>
-                  <Dialog.Header>
-                    <Dialog.Title>Add New Laptop</Dialog.Title>
-                  </Dialog.Header>
-                  <Dialog.Body>
-                    <Field.Root required>
-                      <Field.Label>
-                        Laptop's Name <Field.RequiredIndicator />
-                      </Field.Label>
-                      <Input
-                        placeholder="Enter Laptop's Name"
-                        value={laptopName}
-                        onChange={(e) => setLaptopName(e.target.value)}
-                      />
-                    </Field.Root>
-                  </Dialog.Body>
-                  <Dialog.Footer>
-                    <Dialog.ActionTrigger asChild>
-                      <Button variant="outline">Cancel</Button>
-                    </Dialog.ActionTrigger>
-                    <Button color="white" onClick={() => handleAdd()}>
-                      Add
-                    </Button>
-                  </Dialog.Footer>
-                  <Dialog.CloseTrigger asChild>
-                    <CloseButton size="sm" />
-                  </Dialog.CloseTrigger>
-                </Dialog.Content>
-              </Dialog.Positioner>
-            </Portal>
-          </Dialog.Root>
+          <ShowAll></ShowAll>
+          {/* Dialog for Adding a NEW LAPTOP */}
+          <ReusableDialog
+            logo={<CgAdd color={"white"} size="24px" />}
+            logoText="Add Laptop"
+            label="Add New Laptop"
+            placeholder="Enter Laptop's Name"
+            onSubmit={handleAddLaptop}
+            isUser={false} // This dialog is NOT for users
+          />
+          {/* Dialog for Adding a NEW USER */}
+          <ReusableDialog
+            logo={<CgUserAdd color={"white"} size="24px" />}
+            logoText="Add User"
+            label="Add New User"
+            onSubmit={handleAddUser}
+            isUser={true} // This dialog IS for users
+          />
+          <Button
+            onClick={toggleDarkMode}
+            colorScheme={isDarkMode ? "yellow" : "blue"}
+          >
+            {isDarkMode ? (
+              <Icon as={FaSun} color="white" />
+            ) : (
+              <Icon as={FaMoon} color="white" />
+            )}
+          </Button>
         </Flex>
       </Flex>
     </Box>
