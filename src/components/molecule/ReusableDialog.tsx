@@ -8,6 +8,7 @@ import {
   Input,
   VStack,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 // Define the shape of a user object
 interface UserData {
@@ -26,7 +27,6 @@ interface ReusableDialogProps {
   onSubmit: (value: any) => void;
   isUser?: boolean; // New prop to determine the form type
 }
-
 const ReusableDialog: React.FC<ReusableDialogProps> = ({
   logo,
   logoText,
@@ -35,10 +35,8 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
   onSubmit,
   isUser = false, // Default to false
 }) => {
-  // State for the default single-input form
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = React.useState("");
-
-  // State for the multi-field user form
   const [userFields, setUserFields] = React.useState({
     id: "",
     name: "",
@@ -72,7 +70,11 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
         setInputValue("");
       }
       // If we reach here, it means submission was successful
-      window.location.reload(); // Refresh the page instead of just closing the dialog
+      const closeButton = document.querySelector(
+        '[aria-label="Close dialog"]'
+      ) as HTMLButtonElement;
+      if (closeButton) closeButton.click();
+      navigate("/"); // Navigate to root instead of reloading
     } catch (error) {
       alert(
         error instanceof Error
