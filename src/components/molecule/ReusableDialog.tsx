@@ -8,7 +8,6 @@ import {
   Input,
   VStack,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 
 // Define the shape of a user object
 interface UserData {
