@@ -17,8 +17,8 @@ const LoginPage: React.FC = () => {
       const isValid = await supabaseService.loginAdmin(email, password);
       if (isValid) {
         sessionStorage.setItem("token", "your-auth-token"); // Mock token storage
-        alert("Login successful!");
         navigate("/dashboard"); // Redirect to dashboard
+        window.location.reload(); // Refresh the page
       } else {
         alert("Invalid email or password.");
       }
