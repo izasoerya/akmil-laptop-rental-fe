@@ -70,11 +70,8 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
         setInputValue("");
       }
       // If we reach here, it means submission was successful
-      const closeButton = document.querySelector(
-        '[aria-label="Close dialog"]'
-      ) as HTMLButtonElement;
-      if (closeButton) closeButton.click();
-      navigate("/"); // Navigate to root instead of reloading
+      // This will both reload the page and redirect to root in one step
+      window.location.href = "/";
     } catch (error) {
       alert(
         error instanceof Error
