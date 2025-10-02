@@ -48,7 +48,7 @@ const LoginPage: React.FC = () => {
         >
           <div>
             <h2>Admin Login</h2>
-            <p>Laptop Rental System</p>
+            <p>Peminjaman Laptop AAU</p>
           </div>
           <div style={{ position: "absolute", top: 0, right: 0 }}>
             <DarkModeToggle
