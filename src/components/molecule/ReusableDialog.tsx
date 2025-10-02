@@ -8,10 +8,11 @@ import {
   Input,
   VStack,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 // Define the shape of a user object
 interface UserData {
-  id?: number;
+  id: number;
   name: string;
   nrp?: string;
   pangkat?: string;
@@ -26,7 +27,6 @@ interface ReusableDialogProps {
   onSubmit: (value: any) => void;
   isUser?: boolean; // New prop to determine the form type
 }
-
 const ReusableDialog: React.FC<ReusableDialogProps> = ({
   logo,
   logoText,
@@ -35,10 +35,8 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
   onSubmit,
   isUser = false, // Default to false
 }) => {
-  // State for the default single-input form
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = React.useState("");
-
-  // State for the multi-field user form
   const [userFields, setUserFields] = React.useState({
     id: "",
     name: "",
@@ -53,34 +51,48 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
     setUserFields((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    if (isUser) {
-      if (!userFields.name.trim()) return; // Require at least a name
-      const userData: UserData = {
-        name: userFields.name,
-        // Only include optional fields if they are not empty
-        ...(userFields.id && { id: parseInt(userFields.id, 10) }),
-        ...(userFields.nrp && { nrp: userFields.nrp }),
-        ...(userFields.pangkat && { pangkat: userFields.pangkat }),
-        ...(userFields.kelas && { kelas: userFields.kelas }),
-      };
-      onSubmit(userData);
-      // Reset user form
-      setUserFields({ id: "", name: "", nrp: "", pangkat: "", kelas: "" });
-    } else {
-      if (!inputValue.trim()) return;
-      onSubmit(inputValue);
-      setInputValue(""); // Reset default form
+  const handleSubmit = async () => {
+    try {
+      if (isUser) {
+        if (!userFields.name.trim()) return; // Require at least a name
+        const userData: UserData = {
+          id: parseInt(userFields.id, 10),
+          name: userFields.name,
+          ...(userFields.nrp && { nrp: userFields.nrp }),
+          ...(userFields.pangkat && { pangkat: userFields.pangkat }),
+          ...(userFields.kelas && { kelas: userFields.kelas }),
+        };
+        await onSubmit(userData);
+        setUserFields({ id: "", name: "", nrp: "", pangkat: "", kelas: "" });
+      } else {
+        if (!inputValue.trim()) return;
+        await onSubmit(inputValue);
+        setInputValue("");
+      }
+      // If we reach here, it means submission was successful
+      const closeButton = document.querySelector(
+        '[aria-label="Close dialog"]'
+      ) as HTMLButtonElement;
+      if (closeButton) closeButton.click();
+      navigate("/"); // Navigate to root instead of reloading
+    } catch (error) {
+      alert(
+        error instanceof Error
+          ? error.message
+          : "An error occurred while submitting"
+      );
     }
   };
 
   const renderUserForm = () => (
     <VStack>
-      <Field.Root>
-        <Field.Label>ID (Optional)</Field.Label>
+      <Field.Root required>
+        <Field.Label>
+          ID <Field.RequiredIndicator />
+        </Field.Label>
         <Input
           name="id"
-          placeholder="e.g., 123"
+          placeholder="Enter id (must unique)"
           value={userFields.id}
           onChange={handleUserChange}
         />
@@ -155,7 +167,7 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
           }}
         >
           {logo}
-          <span>{logoText}</span>
+          <span style={{ fontSize: "0.75rem" }}>{logoText}</span>
         </div>
       </Dialog.Trigger>
       <Portal>

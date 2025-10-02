@@ -9,7 +9,7 @@ import { LuSearch } from "react-icons/lu";
 import SupabaseService from "../../services/supabase_service";
 import { useEffect, useState } from "react";
 import type { UserAcc } from "../../models/user_acc";
-import { BiTrash } from "react-icons/bi";
+import { BiArrowBack, BiTrash } from "react-icons/bi";
 
 export const ShowAll = () => {
   const [userData, setUserData] = useState<UserAcc[]>([]);
@@ -47,7 +47,15 @@ export const ShowAll = () => {
             <Dialog.Content>
               <Dialog.Header>
                 <Dialog.Title>List Nama</Dialog.Title>
-                <Dialog.CloseTrigger />
+                <Dialog.CloseTrigger asChild>
+                  <IconButton
+                    aria-label="Close dialog"
+                    variant="ghost"
+                    size="sm"
+                  >
+                    <BiArrowBack />
+                  </IconButton>
+                </Dialog.CloseTrigger>
               </Dialog.Header>
               <Dialog.Body>
                 {/* The table now lives inside the scrollable body */}

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import supabaseService from "../../services/supabase_service";
 import styles from "./LoginPage.module.css";
 import DarkModeToggle from "../molecule/dark_mode";
@@ -9,7 +8,6 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +15,6 @@ const LoginPage: React.FC = () => {
       const isValid = await supabaseService.loginAdmin(email, password);
       if (isValid) {
         sessionStorage.setItem("token", "your-auth-token"); // Mock token storage
-        navigate("/dashboard"); // Redirect to dashboard
         window.location.reload(); // Refresh the page
       } else {
         alert("Invalid email or password.");
@@ -51,7 +48,7 @@ const LoginPage: React.FC = () => {
         >
           <div>
             <h2>Admin Login</h2>
-            <p>Laptop Rental System</p>
+            <p>Peminjaman Laptop AAU</p>
           </div>
           <div style={{ position: "absolute", top: 0, right: 0 }}>
             <DarkModeToggle

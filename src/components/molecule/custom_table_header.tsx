@@ -1,10 +1,11 @@
 import React from "react";
-import { Box, Flex, Text, VStack, Button, Icon } from "@chakra-ui/react";
+import { Box, Flex, Text, Button, Icon } from "@chakra-ui/react";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { CgAdd, CgUserAdd } from "react-icons/cg"; // Added CgUserAdd for clarity
 import SupabaseService from "@/services/supabase_service";
 import ReusableDialog from "./ReusableDialog"; // Make sure this path is correct
 import { ShowAll } from "./show_all";
+import { SettingsMenu } from "./settings_menu";
 
 // A type for the user data object for better code safety
 interface UserData {
@@ -16,13 +17,11 @@ interface UserData {
 }
 
 interface CustomTableHeaderProps {
-  lastUpdate?: string;
   toggleDarkMode: () => void;
   isDarkMode: boolean;
 }
 
 const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
-  lastUpdate,
   toggleDarkMode,
   isDarkMode,
 }) => {
@@ -84,18 +83,10 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
           RealTime Dashboard
         </Text>
         <Flex gap="5" align="center">
-          <VStack align="flex-end" gap={0}>
-            <Text fontSize="sm" color={isDarkMode ? "white" : "black"}>
-              Last update:
-            </Text>
-            <Text fontSize="sm" color={isDarkMode ? "white" : "black"}>
-              {lastUpdate ? lastUpdate : "-"}
-            </Text>
-          </VStack>
           <ShowAll></ShowAll>
           {/* Dialog for Adding a NEW LAPTOP */}
           <ReusableDialog
-            logo={<CgAdd color={"white"} size="24px" />}
+            logo={<CgAdd color={"white"} size="1.5rem" />}
             logoText="Add Laptop"
             label="Add New Laptop"
             placeholder="Enter Laptop's Name"
@@ -104,7 +95,7 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
           />
           {/* Dialog for Adding a NEW USER */}
           <ReusableDialog
-            logo={<CgUserAdd color={"white"} size="24px" />}
+            logo={<CgUserAdd color={"white"} size="1.5rem" />}
             logoText="Add User"
             label="Add New User"
             onSubmit={handleAddUser}
@@ -120,6 +111,7 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
               <Icon as={FaMoon} color="white" />
             )}
           </Button>
+          <SettingsMenu></SettingsMenu>
         </Flex>
       </Flex>
     </Box>

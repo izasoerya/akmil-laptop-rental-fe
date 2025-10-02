@@ -47,7 +47,18 @@ class SupabaseService {
   }
 
   async insertLaptopAcc(item: string): Promise<void> {
+    const { data: lastRecord, error: fetchError } = await this.api
+      .from("laptop_acc")
+      .select("id")
+      .order("id", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    const nextId = lastRecord ? lastRecord.id + 1 : 1;
     const { error } = await this.api.from("laptop_acc").insert({
+      id: nextId,
       name: item,
     });
     if (error) throw error;

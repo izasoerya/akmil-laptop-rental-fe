@@ -86,7 +86,6 @@ function Dashboard() {
     <div className={styles.container} style={containerStyle}>
       <Flex gap="2" direction="column">
         <CustomTableHeader
-          lastUpdate={new Date().toLocaleString()}
           toggleDarkMode={() => setIsDarkMode((prev) => !prev)}
           isDarkMode={isDarkMode}
         />
