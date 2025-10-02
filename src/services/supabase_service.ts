@@ -95,6 +95,11 @@ class SupabaseService {
     if (error) throw error;
     return data || [];
   }
+
+  async deleteUser(id: number): Promise<void> {
+    const { error } = await this.api.from("user_acc").delete().eq("id", id);
+    if (error) throw error;
+  }
 }
 
 export default new SupabaseService();

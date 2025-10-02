@@ -22,8 +22,18 @@ export const ShowAll = () => {
     fetchData();
   }, []);
 
-  const handleDelete = (userId: number) => {
-    setUserData((prev) => prev.filter((user) => user.id !== userId));
+  const handleDelete = async (userId: number) => {
+    try {
+      // Delete from Supabase first
+      await SupabaseService.deleteUser(userId);
+      // Then update local state
+      setUserData((prev) => prev.filter((user) => user.id !== userId));
+    } catch (error) {
+      alert(
+        "Failed to delete user: " +
+          (error instanceof Error ? error.message : "Unknown error")
+      );
+    }
   };
 
   return (
