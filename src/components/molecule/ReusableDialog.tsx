@@ -35,7 +35,6 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
   onSubmit,
   isUser = false, // Default to false
 }) => {
-  const navigate = useNavigate();
   const [inputValue, setInputValue] = React.useState("");
   const [userFields, setUserFields] = React.useState({
     id: "",
