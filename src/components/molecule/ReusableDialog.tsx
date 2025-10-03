@@ -204,7 +204,10 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
                   {isUser ? renderUserForm() : renderDefaultForm()}
                 </Dialog.Body>
                 <Dialog.Footer>
-                  <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDialogOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button color="white" onClick={handleSubmit}>
