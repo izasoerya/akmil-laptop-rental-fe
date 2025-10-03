@@ -1,11 +1,6 @@
-import {
-  Dialog,
-  Stack,
-  Table,
-  IconButton,
-  Portal, // Import Portal for proper layering
-} from "@chakra-ui/react";
+import { Dialog, Stack, Table, IconButton, Portal } from "@chakra-ui/react";
 import { LuSearch } from "react-icons/lu";
+import { NotificationDialog } from "./notification_dialog";
 import SupabaseService from "../../services/supabase_service";
 import { useEffect, useState } from "react";
 import type { UserAcc } from "../../models/user_acc";
@@ -13,6 +8,17 @@ import { BiArrowBack, BiTrash } from "react-icons/bi";
 
 export const ShowAll = () => {
   const [userData, setUserData] = useState<UserAcc[]>([]);
+  const [notification, setNotification] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: "success" | "error";
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "success",
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,11 +34,22 @@ export const ShowAll = () => {
       await SupabaseService.deleteUser(userId);
       // Then update local state
       setUserData((prev) => prev.filter((user) => user.id !== userId));
+      // Show success notification
+      setNotification({
+        isOpen: true,
+        title: "Success",
+        message: "User has been successfully deleted!",
+        type: "success",
+      });
     } catch (error) {
-      alert(
-        "Failed to delete user: " +
-          (error instanceof Error ? error.message : "Unknown error")
-      );
+      // Show error notification
+      setNotification({
+        isOpen: true,
+        title: "Error",
+        message:
+          error instanceof Error ? error.message : "Failed to delete user",
+        type: "error",
+      });
     }
   };
 
@@ -110,6 +127,13 @@ export const ShowAll = () => {
           </Dialog.Positioner>
         </Portal>
       </Dialog.Root>
+      <NotificationDialog
+        isOpen={notification.isOpen}
+        onClose={() => setNotification((prev) => ({ ...prev, isOpen: false }))}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+      />
     </Stack>
   );
 };

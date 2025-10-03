@@ -1,26 +1,28 @@
 import styles from "./DashboardPage.module.css";
 import { useEffect, useState } from "react";
 import supabaseService from "../../services/supabase_service";
-import {
-  Box,
-  Flex,
-  Table,
-  Spinner,
-  IconButton,
-  Dialog,
-  Portal,
-  Button,
-  CloseButton,
-} from "@chakra-ui/react";
+import { Box, Flex, Table, Spinner, IconButton } from "@chakra-ui/react";
 import CustomTableHeader from "../../components/molecule/custom_table_header";
 import type { LaptopAcc } from "../../models/laptop_data";
 import { BiTrash } from "react-icons/bi";
 import ListName from "../../models/lookup_table_name";
+import { NotificationDialog } from "../molecule/notification_dialog";
 
 function Dashboard() {
   const [items, setItems] = useState<LaptopAcc[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [notification, setNotification] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: "success" | "error";
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "success",
+  });
 
   const containerStyle = {
     background: isDarkMode
@@ -77,8 +79,20 @@ function Dashboard() {
   const handleDelete = async (id: number) => {
     try {
       await supabaseService.deleteLaptopAcc(id);
+      setNotification({
+        isOpen: true,
+        title: "Success",
+        message: "Item has been successfully deleted!",
+        type: "success",
+      });
     } catch (err) {
       console.error("Delete error:", err);
+      setNotification({
+        isOpen: true,
+        title: "Error",
+        message: err instanceof Error ? err.message : "Failed to delete item",
+        type: "error",
+      });
     }
   };
 
@@ -231,42 +245,13 @@ function Dashboard() {
                         >
                           {item.user_id ? "Rented" : "Available"}
                         </Box>
-                        <Dialog.Root>
-                          <Dialog.Trigger asChild>
-                            <IconButton bg="red">
-                              <BiTrash color="white" />
-                            </IconButton>
-                          </Dialog.Trigger>
-                          <Portal>
-                            <Dialog.Backdrop />
-                            <Dialog.Positioner>
-                              <Dialog.Content>
-                                <Dialog.Header>
-                                  <Dialog.Title>Delete Item</Dialog.Title>
-                                </Dialog.Header>
-                                <Dialog.Body>
-                                  <p>Are you sure? This is irreversible.</p>
-                                </Dialog.Body>
-                                <Dialog.Footer>
-                                  <Dialog.ActionTrigger asChild>
-                                    <Button variant="outline">Cancel</Button>
-                                  </Dialog.ActionTrigger>
-                                  <Button
-                                    color="white"
-                                    onClick={() =>
-                                      handleDelete(Number(item.id))
-                                    }
-                                  >
-                                    Delete
-                                  </Button>
-                                </Dialog.Footer>
-                                <Dialog.CloseTrigger asChild>
-                                  <CloseButton size="sm" />
-                                </Dialog.CloseTrigger>
-                              </Dialog.Content>
-                            </Dialog.Positioner>
-                          </Portal>
-                        </Dialog.Root>
+                        <IconButton
+                          bg="red"
+                          onClick={() => handleDelete(Number(item.id))}
+                          aria-label="Delete item"
+                        >
+                          <BiTrash color="white" />
+                        </IconButton>
                       </Flex>
                     </Table.Cell>
                   </Table.Row>
@@ -276,6 +261,13 @@ function Dashboard() {
           </div>
         )}
       </Flex>
+      <NotificationDialog
+        isOpen={notification.isOpen}
+        onClose={() => setNotification((prev) => ({ ...prev, isOpen: false }))}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+      />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   Input,
   VStack,
 } from "@chakra-ui/react";
+import { NotificationDialog } from "./notification_dialog";
 
 // Define the shape of a user object
 interface UserData {
@@ -42,6 +43,18 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
     pangkat: "",
     kelas: "",
   });
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [notification, setNotification] = React.useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: "success" | "error";
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "success",
+  });
 
   // A single handler for all user form inputs
   const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,15 +80,26 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
         await onSubmit(inputValue);
         setInputValue("");
       }
-      // If we reach here, it means submission was successful
-      // This will both reload the page and redirect to root in one step
-      window.location.href = "/";
+      // Close the dialog first
+      setDialogOpen(false);
+      // Then show success notification
+      setNotification({
+        isOpen: true,
+        title: "Success",
+        message: "Data has been successfully saved!",
+        type: "success",
+      });
     } catch (error) {
-      alert(
-        error instanceof Error
-          ? error.message
-          : "An error occurred while submitting"
-      );
+      // Show error notification without closing the dialog
+      setNotification({
+        isOpen: true,
+        title: "Error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "An error occurred while submitting",
+        type: "error",
+      });
     }
   };
 
@@ -147,49 +171,60 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
   );
 
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            backgroundColor: "#1a1a1a",
-            padding: "0.5rem",
-            borderRadius: "10px",
-            color: "white",
-            cursor: "pointer",
-          }}
-        >
-          {logo}
-          <span style={{ fontSize: "0.75rem" }}>{logoText}</span>
-        </div>
-      </Dialog.Trigger>
-      <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content>
-            <Dialog.Header>
-              <Dialog.Title>{label}</Dialog.Title>
-            </Dialog.Header>
-            <Dialog.Body>
-              {isUser ? renderUserForm() : renderDefaultForm()}
-            </Dialog.Body>
-            <Dialog.Footer>
-              <Dialog.ActionTrigger asChild>
-                <Button variant="outline">Cancel</Button>
-              </Dialog.ActionTrigger>
-              <Button color="white" onClick={handleSubmit}>
-                Submit
-              </Button>
-            </Dialog.Footer>
-            <Dialog.CloseTrigger asChild>
-              <CloseButton size="sm" />
-            </Dialog.CloseTrigger>
-          </Dialog.Content>
-        </Dialog.Positioner>
-      </Portal>
-    </Dialog.Root>
+    <>
+      <Dialog.Root>
+        <Dialog.Trigger asChild>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              backgroundColor: "#1a1a1a",
+              padding: "0.5rem",
+              borderRadius: "10px",
+              color: "white",
+              cursor: "pointer",
+            }}
+            onClick={() => setDialogOpen(true)}
+          >
+            {logo}
+            <span style={{ fontSize: "0.75rem" }}>{logoText}</span>
+          </div>
+        </Dialog.Trigger>
+        {dialogOpen && (
+          <Portal>
+            <Dialog.Backdrop onClick={() => setDialogOpen(false)} />
+            <Dialog.Positioner>
+              <Dialog.Content>
+                <Dialog.Header>
+                  <Dialog.Title>{label}</Dialog.Title>
+                  <CloseButton size="sm" onClick={() => setDialogOpen(false)} />
+                </Dialog.Header>
+                <Dialog.Body>
+                  {isUser ? renderUserForm() : renderDefaultForm()}
+                </Dialog.Body>
+                <Dialog.Footer>
+                  <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button color="white" onClick={handleSubmit}>
+                    Submit
+                  </Button>
+                </Dialog.Footer>
+              </Dialog.Content>
+            </Dialog.Positioner>
+          </Portal>
+        )}
+      </Dialog.Root>
+      <NotificationDialog
+        isOpen={notification.isOpen}
+        onClose={() => setNotification((prev) => ({ ...prev, isOpen: false }))}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        onSuccess={() => (window.location.href = "/")}
+      />
+    </>
   );
 };
 

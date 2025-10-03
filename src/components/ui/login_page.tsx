@@ -2,12 +2,24 @@ import React, { useState } from "react";
 import supabaseService from "../../services/supabase_service";
 import styles from "./LoginPage.module.css";
 import DarkModeToggle from "../molecule/dark_mode";
+import { NotificationDialog } from "../molecule/notification_dialog";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [notification, setNotification] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: "success" | "error";
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "success",
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,11 +29,21 @@ const LoginPage: React.FC = () => {
         sessionStorage.setItem("token", "your-auth-token"); // Mock token storage
         window.location.reload(); // Refresh the page
       } else {
-        alert("Invalid email or password.");
+        setNotification({
+          isOpen: true,
+          title: "Login Failed",
+          message: "Invalid email or password.",
+          type: "error",
+        });
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("An error occurred during login.");
+      setNotification({
+        isOpen: true,
+        title: "Error",
+        message: "An error occurred during login.",
+        type: "error",
+      });
     }
   };
 
@@ -103,6 +125,13 @@ const LoginPage: React.FC = () => {
           Login
         </button>
       </form>
+      <NotificationDialog
+        isOpen={notification.isOpen}
+        onClose={() => setNotification((prev) => ({ ...prev, isOpen: false }))}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+      />
     </div>
   );
 };
