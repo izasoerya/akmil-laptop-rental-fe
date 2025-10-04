@@ -5,11 +5,12 @@ import { Box, Flex, Table, Spinner, IconButton } from "@chakra-ui/react";
 import CustomTableHeader from "../../components/molecule/custom_table_header";
 import type { LaptopAcc } from "../../models/laptop_data";
 import { BiTrash } from "react-icons/bi";
-import ListName from "../../models/lookup_table_name";
+import type { UserAcc } from "../../models/user_acc";
 import { NotificationDialog } from "../molecule/notification_dialog";
 
-function Dashboard() {
+const Dashboard = () => {
   const [items, setItems] = useState<LaptopAcc[]>([]);
+  const [users, setUsers] = useState<UserAcc[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notification, setNotification] = useState<{
@@ -37,9 +38,14 @@ function Dashboard() {
     let unsub: { unsubscribe: () => void } | null = null;
 
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const data = await supabaseService.fetchLaptopAcc();
-        setItems(data);
+        const [laptopData, userData] = await Promise.all([
+          supabaseService.fetchLaptopAcc(),
+          supabaseService.fetchUserTable(),
+        ]);
+        setItems(laptopData);
+        setUsers(userData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -49,22 +55,22 @@ function Dashboard() {
     fetchData();
 
     unsub = supabaseService.subscribeLaptopAccChanges(
-      (payload: { eventType: string; new?: LaptopAcc; old?: LaptopAcc }) => {
+      (payload: {
+        eventType: string;
+        new?: LaptopAcc;
+        old?: { id: number };
+      }) => {
         setItems((prevItems) => {
-          if (payload.eventType === "INSERT") {
-            return [...prevItems, payload.new as LaptopAcc];
+          if (payload.eventType === "INSERT" && payload.new) {
+            return [...prevItems, payload.new];
           }
-          if (payload.eventType === "UPDATE") {
+          if (payload.eventType === "UPDATE" && payload.new) {
             return prevItems.map((item) =>
-              item.id === (payload.new as LaptopAcc).id
-                ? (payload.new as LaptopAcc)
-                : item
+              item.id === payload.new!.id ? payload.new! : item
             );
           }
-          if (payload.eventType === "DELETE") {
-            return prevItems.filter(
-              (item) => item.id !== (payload.old as LaptopAcc).id
-            );
+          if (payload.eventType === "DELETE" && payload.old) {
+            return prevItems.filter((item) => item.id !== payload.old!.id);
           }
           return prevItems;
         });
@@ -122,10 +128,7 @@ function Dashboard() {
               WebkitBackdropFilter: "blur(12px)",
               overflow: "hidden",
               padding: "2rem",
-              borderTopLeftRadius: "12px",
-              borderBottomLeftRadius: "12px",
-              borderTopRightRadius: "12px",
-              borderBottomRightRadius: "12px",
+              borderRadius: "12px",
             }}
           >
             <Table.Root
@@ -169,7 +172,6 @@ function Dashboard() {
                     key={item.id}
                     style={{ background: "transparent" }}
                   >
-                    {/* First Cell */}
                     <Table.Cell
                       style={{
                         background: isDarkMode
@@ -182,8 +184,6 @@ function Dashboard() {
                     >
                       {item.name}
                     </Table.Cell>
-
-                    {/* Middle Cells */}
                     <Table.Cell
                       style={{
                         background: isDarkMode
@@ -211,13 +211,9 @@ function Dashboard() {
                       }}
                     >
                       {item.user_id
-                        ? (ListName as { [index: number]: string })[
-                            item.user_id
-                          ]
+                        ? users.find((u) => u.id === item.user_id)?.name || "-"
                         : "-"}
                     </Table.Cell>
-
-                    {/* Last Cell */}
                     <Table.Cell
                       style={{
                         background: isDarkMode
@@ -247,7 +243,7 @@ function Dashboard() {
                         </Box>
                         <IconButton
                           bg="red"
-                          onClick={() => handleDelete(Number(item.id))}
+                          onClick={() => handleDelete(item.id)}
                           aria-label="Delete item"
                         >
                           <BiTrash color="white" />
@@ -270,6 +266,6 @@ function Dashboard() {
       />
     </div>
   );
-}
+};
 
 export default Dashboard;
