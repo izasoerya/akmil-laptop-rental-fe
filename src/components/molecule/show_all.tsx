@@ -23,7 +23,9 @@ export const ShowAll = () => {
   useEffect(() => {
     const fetchData = async () => {
       const users = await SupabaseService.fetchUserTable();
-      setUserData(users);
+      // Sort by id in ascending order
+      const sortedUsers = users.sort((a, b) => a.id - b.id);
+      setUserData(sortedUsers);
     };
     fetchData();
   }, []);
