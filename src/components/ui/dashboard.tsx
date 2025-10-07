@@ -84,11 +84,16 @@ const Dashboard = () => {
 
   const handleDelete = async (id: number) => {
     try {
+      // Delete laptop first
       await supabaseService.deleteLaptopAcc(id);
+
+      // Then delete the corresponding user with the same ID
+      await supabaseService.deleteUser(id);
+
       setNotification({
         isOpen: true,
         title: "Success",
-        message: "Item has been successfully deleted!",
+        message: "Laptop and user have been successfully deleted!",
         type: "success",
       });
     } catch (err) {
@@ -96,7 +101,10 @@ const Dashboard = () => {
       setNotification({
         isOpen: true,
         title: "Error",
-        message: err instanceof Error ? err.message : "Failed to delete item",
+        message:
+          err instanceof Error
+            ? err.message
+            : "Failed to delete laptop and user",
         type: "error",
       });
     }
