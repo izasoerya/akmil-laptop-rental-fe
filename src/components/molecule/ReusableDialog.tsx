@@ -8,6 +8,7 @@ import {
   Input,
   VStack,
 } from "@chakra-ui/react";
+import SupabaseService from "../../services/supabase_service";
 import { NotificationDialog } from "./notification_dialog";
 
 // Define the shape of a user object
@@ -73,7 +74,14 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
           ...(userFields.pangkat && { pangkat: userFields.pangkat }),
           ...(userFields.kelas && { kelas: userFields.kelas }),
         };
+
+        // First, submit the user
         await onSubmit(userData);
+
+        // Then, automatically create a laptop with the same ID
+        const laptopName = `${userFields.id} - Axioo MyBook Pro K7V`;
+        await SupabaseService.insertLaptopAcc(laptopName);
+
         setUserFields({ id: "", name: "", nrp: "", pangkat: "", kelas: "" });
       } else {
         if (!inputValue.trim()) return;
@@ -86,7 +94,9 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({
       setNotification({
         isOpen: true,
         title: "Success",
-        message: "Data has been successfully saved!",
+        message: isUser
+          ? "User and laptop have been successfully created!"
+          : "Data has been successfully saved!",
         type: "success",
       });
     } catch (error) {

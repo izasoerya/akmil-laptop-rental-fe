@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Flex, Text, Button, Icon } from "@chakra-ui/react";
 import { FaSun, FaMoon } from "react-icons/fa";
-import { CgAdd, CgUserAdd } from "react-icons/cg"; // Added CgUserAdd for clarity
+import { CgUserAdd } from "react-icons/cg"; // Added CgUserAdd for clarity
 import SupabaseService from "@/services/supabase_service";
 import ReusableDialog from "./ReusableDialog"; // Make sure this path is correct
 import { ShowAll } from "./show_all";
@@ -28,15 +28,15 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
   // State is no longer needed here; it's managed by ReusableDialog.
 
   // Handler for adding a LAPTOP (expects a string)
-  const handleAddLaptop = async (laptopName: string) => {
-    if (!laptopName.trim()) return; // Validation for the string
-    try {
-      await SupabaseService.insertLaptopAcc(laptopName);
-      console.log("Laptop added successfully!");
-    } catch (err) {
-      console.error("Insert laptop error:", err);
-    }
-  };
+  // const handleAddLaptop = async (laptopName: string) => {
+  //   if (!laptopName.trim()) return; // Validation for the string
+  //   try {
+  //     await SupabaseService.insertLaptopAcc(laptopName);
+  //     console.log("Laptop added successfully!");
+  //   } catch (err) {
+  //     console.error("Insert laptop error:", err);
+  //   }
+  // };
 
   // Handler for adding a USER (expects an object)
   const handleAddUser = async (userData: UserData) => {
@@ -85,18 +85,18 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
         <Flex gap="5" align="center">
           <ShowAll></ShowAll>
           {/* Dialog for Adding a NEW LAPTOP */}
-          <ReusableDialog
-            logo={<CgAdd color={"white"} size="1.5rem" />}
-            logoText="Add Laptop"
+          {/* <ReusableDialog
+            logo={<CgAdd color={"white"} size="1rem" />}
+            logoText="Tambahkan Laptop"
             label="Add New Laptop"
             placeholder="Enter Laptop's Name"
             onSubmit={handleAddLaptop}
             isUser={false} // This dialog is NOT for users
-          />
+          /> */}
           {/* Dialog for Adding a NEW USER */}
           <ReusableDialog
-            logo={<CgUserAdd color={"white"} size="1.5rem" />}
-            logoText="Add User"
+            logo={<CgUserAdd color={"white"} size="1rem" />}
+            logoText="Tambahkan User"
             label="Add New User"
             onSubmit={handleAddUser}
             isUser={true} // This dialog IS for users
