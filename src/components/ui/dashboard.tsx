@@ -151,10 +151,10 @@ const Dashboard = () => {
                       borderBottomLeftRadius: "12px",
                     }}
                   >
-                    Product
+                    Nama Laptop
                   </Table.ColumnHeader>
-                  <Table.ColumnHeader>Last Interact</Table.ColumnHeader>
-                  <Table.ColumnHeader>Rented By</Table.ColumnHeader>
+                  <Table.ColumnHeader>Interaksi Terakhir</Table.ColumnHeader>
+                  <Table.ColumnHeader>Produk</Table.ColumnHeader>
                   <Table.ColumnHeader
                     textAlign="center"
                     style={{
@@ -210,9 +210,8 @@ const Dashboard = () => {
                         border: "none",
                       }}
                     >
-                      {item.user_id
-                        ? users.find((u) => u.id === item.user_id)?.name || "-"
-                        : "-"}
+                      {users.find((u) => u.id === item.id)?.name ||
+                        "Unknown User"}
                     </Table.Cell>
                     <Table.Cell
                       style={{

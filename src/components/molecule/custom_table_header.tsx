@@ -86,8 +86,8 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
           <ShowAll></ShowAll>
           {/* Dialog for Adding a NEW LAPTOP */}
           <ReusableDialog
-            logo={<CgAdd color={"white"} size="1.5rem" />}
-            logoText="Add Laptop"
+            logo={<CgAdd color={"white"} size="1rem" />}
+            logoText="Tambahkan Laptop"
             label="Add New Laptop"
             placeholder="Enter Laptop's Name"
             onSubmit={handleAddLaptop}
@@ -95,8 +95,8 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
           />
           {/* Dialog for Adding a NEW USER */}
           <ReusableDialog
-            logo={<CgUserAdd color={"white"} size="1.5rem" />}
-            logoText="Add User"
+            logo={<CgUserAdd color={"white"} size="1rem" />}
+            logoText="Tambahkan User"
             label="Add New User"
             onSubmit={handleAddUser}
             isUser={true} // This dialog IS for users
