@@ -47,16 +47,24 @@ class SupabaseService {
   }
 
   async insertLaptopAcc(item: string): Promise<void> {
-    const { data: lastRecord, error: fetchError } = await this.api
+    const { data, error: fetchError } = await this.api
       .from("laptop_acc")
       .select("id")
       .order("id", { ascending: false })
-      .limit(1)
-      .single();
+      .limit(1);
 
     if (fetchError) throw fetchError;
 
-    const nextId = lastRecord ? lastRecord.id + 1 : 1;
+    // If table is empty, set id to 1
+    let nextId = 1;
+    if (
+      data &&
+      data.length > 0 &&
+      data[0]?.id !== undefined &&
+      data[0]?.id !== null
+    ) {
+      nextId = data[0].id + 1;
+    }
     const { error } = await this.api.from("laptop_acc").insert({
       id: nextId,
       name: item,
