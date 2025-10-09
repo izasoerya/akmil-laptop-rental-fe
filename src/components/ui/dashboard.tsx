@@ -162,7 +162,8 @@ const Dashboard = () => {
                     Nama Laptop
                   </Table.ColumnHeader>
                   <Table.ColumnHeader>Interaksi Terakhir</Table.ColumnHeader>
-                  <Table.ColumnHeader>Produk</Table.ColumnHeader>
+                  <Table.ColumnHeader>Pemilik</Table.ColumnHeader>
+                  <Table.ColumnHeader>Kondisi</Table.ColumnHeader>
                   <Table.ColumnHeader
                     textAlign="center"
                     style={{
@@ -210,6 +211,7 @@ const Dashboard = () => {
                           })
                         : "-"}
                     </Table.Cell>
+
                     <Table.Cell
                       style={{
                         background: isDarkMode
@@ -220,6 +222,16 @@ const Dashboard = () => {
                     >
                       {users.find((u) => u.id === item.id)?.name ||
                         "Unknown User"}
+                    </Table.Cell>
+                    <Table.Cell
+                      style={{
+                        background: isDarkMode
+                          ? "rgba(51, 51, 51, 0.4)"
+                          : "#F0F8FF",
+                        border: "none",
+                      }}
+                    >
+                      {item.condition}
                     </Table.Cell>
                     <Table.Cell
                       style={{
@@ -246,7 +258,7 @@ const Dashboard = () => {
                           height="40px"
                           justifyContent="center"
                         >
-                          {item.user_id ? "Rented" : "Available"}
+                          {item.user_id ? "Dipinjam" : "Tersedia"}
                         </Box>
                         <IconButton
                           bg="red"
