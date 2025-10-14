@@ -22,6 +22,7 @@ export const SettingsMenu = () => {
           aria-label="Settings menu"
           variant="ghost"
           color="current"
+          bgColor={"black"}
           style={{ zIndex: 600 }}
         >
           <BsThreeDotsVertical color="white" />
