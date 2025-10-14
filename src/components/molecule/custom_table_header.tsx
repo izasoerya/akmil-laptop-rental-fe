@@ -103,6 +103,7 @@ const CustomTableHeader: React.FC<CustomTableHeaderProps> = ({
           />
           <Button
             onClick={toggleDarkMode}
+            bgColor={"black"}
             colorScheme={isDarkMode ? "yellow" : "blue"}
           >
             {isDarkMode ? (
