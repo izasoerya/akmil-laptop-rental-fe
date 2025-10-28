@@ -3,6 +3,7 @@ import supabaseService from "../../services/supabase_service";
 import styles from "./LoginPage.module.css";
 import DarkModeToggle from "../molecule/dark_mode";
 import { NotificationDialog } from "../molecule/notification_dialog";
+import AdminLoggedSingleton from "../../models/admin_logged";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -24,10 +25,14 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const isValid = await supabaseService.loginAdmin(email, password);
-      if (isValid) {
-        sessionStorage.setItem("token", "your-auth-token"); // Mock token storage
-        window.location.reload(); // Refresh the page
+      const { result, account } = await supabaseService.loginAdmin(
+        email,
+        password
+      );
+      if (result) {
+        sessionStorage.setItem("token", "your-auth-token");
+        window.location.reload();
+        AdminLoggedSingleton.setAdmin(account);
       } else {
         setNotification({
           isOpen: true,
