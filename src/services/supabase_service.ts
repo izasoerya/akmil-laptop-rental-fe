@@ -77,19 +77,23 @@ class SupabaseService {
     if (error) throw error;
   }
 
-  async loginAdmin(email: string, password: string): Promise<boolean> {
+  async loginAdmin(
+    email: string,
+    password: string
+  ): Promise<{ result: boolean; account: any }> {
     const { data, error } = await this.api
       .from("admin_acc")
-      .select("password")
+      .select("*")
       .eq("email", email)
       .single();
 
     if (error || !data) {
       console.error("Login error:", error);
-      return false;
+      return { result: false, account: null };
     }
 
-    return data.password === password;
+    const result = data.password === password;
+    return { result, account: data };
   }
 
   // Updated to accept the UserAcc type with an optional id

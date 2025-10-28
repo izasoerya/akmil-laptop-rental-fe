@@ -7,6 +7,7 @@ import type { LaptopAcc } from "../../models/laptop_data";
 import { BiTrash } from "react-icons/bi";
 import type { UserAcc } from "../../models/user_acc";
 import { NotificationDialog } from "../molecule/notification_dialog";
+import AdminLoggedSingleton from "../../models/admin_logged";
 
 const Dashboard = () => {
   const [items, setItems] = useState<LaptopAcc[]>([]);
@@ -84,10 +85,7 @@ const Dashboard = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      // Delete laptop first
       await supabaseService.deleteLaptopAcc(id);
-
-      // Then delete the corresponding user with the same ID
       await supabaseService.deleteUser(id);
 
       setNotification({
@@ -117,6 +115,33 @@ const Dashboard = () => {
           toggleDarkMode={() => setIsDarkMode((prev) => !prev)}
           isDarkMode={isDarkMode}
         />
+
+        <Box
+          bg={isDarkMode ? "rgba(0, 0, 0, 0.5)" : "rgba(255, 255, 255, 0.35)"}
+          p={3}
+          borderRadius="md"
+          width="75%"
+          margin="0 auto"
+          boxShadow="0 8px 24px rgba(0, 0, 0, 0.25)"
+          style={{
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+          }}
+        >
+          <Flex justify="space-between" align="center">
+            <Box>
+              <span style={{ fontWeight: "bold" }}>Logged in as: </span>
+              <span>
+                {AdminLoggedSingleton.getAdmin()?.username || "Unknown"}
+              </span>
+            </Box>
+            <Box>
+              <span style={{ fontSize: "0.9em", opacity: 0.8 }}>
+                {AdminLoggedSingleton.getAdmin()?.email || ""}
+              </span>
+            </Box>
+          </Flex>
+        </Box>
 
         {loading ? (
           <Spinner size="xl" alignSelf="center" />
